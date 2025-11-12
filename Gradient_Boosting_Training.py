@@ -1,37 +1,65 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.ensemble import GradientBoostingRegressor as gbr
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import GridSearchCV
 
 dataset = pd.read_csv('datasets/steel.csv')
 
+# Feature scaling
 scaler = StandardScaler()
-feature_cols = dataset.select_dtypes(include=[np.number]).columns.drop('tensile_strength')
+feature_cols = dataset.columns.drop('tensile_strength')
 dataset[feature_cols] = scaler.fit_transform(dataset[feature_cols])
 
 kf = KFold(n_splits=10, shuffle=False)
-average_mean_squared_error = 0
+default_average_mean_squared_error = 0
+tuned_average_mean_squared_error = 0
 
+mse_output = []
+
+# Training and evaluation using 10-Fold Cross-Validation
 for train, test in kf.split(dataset):
     train_data = dataset.iloc[train]
     test_data = dataset.iloc[test]
 
+    # Defining test and target sets
     X_train = train_data.drop('tensile_strength', axis=1)
     y_train = train_data['tensile_strength']
     X_test = test_data.drop('tensile_strength', axis=1)
     y_test = test_data['tensile_strength']
 
-    model = gbr()
-    model.fit(X_train, y_train)
+    # Training the default GBR model
+    default_model = GradientBoostingRegressor()
+    default_model.fit(X_train, y_train)
 
-    predictions = model.predict(X_test)
-    mse = mean_squared_error(y_test, predictions)
-    print(f'Mean Squared Error: {mse}')
+    default_predictions = default_model.predict(X_test)
+    default_mse = mean_squared_error(y_test, default_predictions)
 
-    average_mean_squared_error += mse
+    # Training the tuned GBR model
+    # Varied hyperparameters are learning rate and n_estimators
+    tuned_model = GradientBoostingRegressor(learning_rate=0.05, n_estimators=500)
+    tuned_model.fit(X_train, y_train)
 
-average_mean_squared_error /= 10
-print(f'\nAverage Mean Squared Error over 10 folds: {average_mean_squared_error}')
+    tuned_predictions = tuned_model.predict(X_test)
+    tuned_mse = mean_squared_error(y_test, tuned_predictions)
+
+    # Appending MSE for the current fold
+    mse_output.append({"Default_MSE": default_mse,
+                       "Tuned_MSE": tuned_mse})
+
+    default_average_mean_squared_error += default_mse
+    tuned_average_mean_squared_error += tuned_mse
+
+# Appending average MSE to the results
+default_average_mean_squared_error /= 10
+tuned_average_mean_squared_error /= 10
+
+mse_output.append({"Default_MSE": default_average_mean_squared_error,
+                   "Tuned_MSE": tuned_average_mean_squared_error})
+
+# Saving MSE results to a CSV file
+mse_df = pd.DataFrame(mse_output)
+mse_df.to_csv('datasets/Gradient_Boosting_MSE_Results.csv', index=False)
