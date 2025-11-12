@@ -29,15 +29,15 @@ print(f"mean(tensile_strength) = {mean_tensile_strength:.2f}")
 print(f"median = {median_tensile_strength:.2f}, std = {std_tensile_strength:.2f}, range = {range_tensile_strength:.2f}\n")
 
 # average RMSEs and their average percent errors
-print(f"Avg {default_test_col}  = {avg_default_test_rmse:.2f} -> {100*avg_default_test_rmse/mean_tensile_strength:.1f}% average error")
-print(f"Avg {tuned_test_col}    = {avg_tuned_test_rmse:.2f} -> {100*avg_tuned_test_rmse/mean_tensile_strength:.1f}% average error")
-print(f"Avg {default_train_col} = {avg_default_train_rmse:.2f} -> {100*avg_default_train_rmse/mean_tensile_strength:.1f}% average error")
-print(f"Avg {tuned_train_col}   = {avg_tuned_train_rmse:.2f} -> {100*avg_tuned_train_rmse/mean_tensile_strength:.1f}% average error\n")
+print(f"Avg {default_test_col}  = {avg_default_test_rmse:.2f} -> {100*avg_default_test_rmse/mean_tensile_strength:.2f}% average error")
+print(f"Avg {tuned_test_col}    = {avg_tuned_test_rmse:.2f} -> {100*avg_tuned_test_rmse/mean_tensile_strength:.2f}% average error")
+print(f"Avg {default_train_col} = {avg_default_train_rmse:.2f} -> {100*avg_default_train_rmse/mean_tensile_strength:.2f}% average error")
+print(f"Avg {tuned_train_col}   = {avg_tuned_train_rmse:.2f} -> {100*avg_tuned_train_rmse/mean_tensile_strength:.2f}% average error\n")
 
 # per-fold percent errors for all four RMSE columns
-for col in (default_test_col, tuned_test_col, default_train_col, tuned_train_col):
+for col in (default_test_col, default_train_col, tuned_test_col, tuned_train_col):
     pct_col = f"{col}_%averageError"
-    rmse_dataset[pct_col] = 100 * rmse_dataset[col] / mean_tensile_strength
+    rmse_dataset[pct_col] = round(100 * rmse_dataset[col] / mean_tensile_strength, 2)
 
 print(rmse_dataset)
 pd.DataFrame(rmse_dataset).to_csv('datasets/Gradient_Boosting_RMSE_PercentErrors.csv', index=False)

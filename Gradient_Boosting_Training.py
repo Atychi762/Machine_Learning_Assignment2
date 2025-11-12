@@ -74,10 +74,10 @@ for train, test in kf.split(dataset):
     tuned_test_rmse = root_mean_squared_error(y_test, tuned_test_predictions)
 
     # Appending RMSE for the current fold
-    rmse_output.append({"Default_TrainData_RMSE": default_train_rmse,
-                        "Default_TestData_RMSE": default_test_rmse,
-                       "Tuned_TrainData_RMSE": tuned_train_rmse,
-                       "Tuned_TestData_RMSE": tuned_test_rmse})
+    rmse_output.append({"Default_TrainData_RMSE": round(default_train_rmse, 2),
+                        "Default_TestData_RMSE": round(default_test_rmse, 2),
+                       "Tuned_TrainData_RMSE": round(tuned_train_rmse, 2),
+                       "Tuned_TestData_RMSE": round(tuned_test_rmse, 2)})
 
     default_average_rmse_test += default_test_rmse
     tuned_average_rmse_test += tuned_test_rmse
@@ -90,10 +90,10 @@ tuned_average_rmse_test /= 10
 default_average_rmse_train /= 10
 tuned_average_rmse_train /= 10
 
-rmse_output.append({ "Default_TrainData_RMSE": default_average_rmse_train,
-                   "Default_TestData_RMSE": default_average_rmse_test,
-                   "Tuned_TrainData_RMSE": tuned_average_rmse_train,
-                   "Tuned_TestData_RMSE": tuned_average_rmse_test})
+rmse_output.append({ "Default_TrainData_RMSE": round(default_average_rmse_train, 2),
+                   "Default_TestData_RMSE": round(default_average_rmse_test, 2),
+                   "Tuned_TrainData_RMSE": round(tuned_average_rmse_train, 2),
+                   "Tuned_TestData_RMSE": round(tuned_average_rmse_test, 2)})
 
 # Saving RMSE results to a CSV file
 rmse_df = pd.DataFrame(rmse_output)
