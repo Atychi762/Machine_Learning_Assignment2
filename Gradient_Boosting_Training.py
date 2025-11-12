@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import GridSearchCV
 
 dataset = pd.read_csv('datasets/steel.csv')
@@ -15,10 +15,10 @@ feature_cols = dataset.columns.drop('tensile_strength')
 dataset[feature_cols] = scaler.fit_transform(dataset[feature_cols])
 
 kf = KFold(n_splits=10, shuffle=False)
-default_average_mean_squared_error = 0
-tuned_average_mean_squared_error = 0
+default_average_root_mean_squared_error = 0
+tuned_average_root_mean_squared_error = 0
 
-mse_output = []
+rmse_output = []
 
 # Training and evaluation using 10-Fold Cross-Validation
 for train, test in kf.split(dataset):
@@ -36,7 +36,7 @@ for train, test in kf.split(dataset):
     default_model.fit(X_train, y_train)
 
     default_predictions = default_model.predict(X_test)
-    default_mse = mean_squared_error(y_test, default_predictions)
+    default_rmse = root_mean_squared_error(y_test, default_predictions)
 
     # Training the tuned GBR model
     # Varied hyperparameters are learning rate and n_estimators
@@ -59,24 +59,24 @@ for train, test in kf.split(dataset):
     best_model = grid_search.best_estimator_
     # Using the best hyperparameters found
     tuned_predictions = best_model.predict(X_test)
-    tuned_mse = mean_squared_error(y_test, tuned_predictions)
+    tuned_rmse = root_mean_squared_error(y_test, tuned_predictions)
 
-    # Appending MSE for the current fold
-    mse_output.append({"Default_MSE": default_mse,
-                       "Tuned_MSE": tuned_mse})
+    # Appending RMSE for the current fold
+    rmse_output.append({"Default_RMSE": default_rmse,
+                       "Tuned_RMSE": tuned_rmse})
 
-    default_average_mean_squared_error += default_mse
-    tuned_average_mean_squared_error += tuned_mse
+    default_average_root_mean_squared_error += default_rmse
+    tuned_average_root_mean_squared_error += tuned_rmse
 
-# Appending average MSE to the results
-default_average_mean_squared_error /= 10
-tuned_average_mean_squared_error /= 10
+# Appending average RMSE to the results
+default_average_root_mean_squared_error /= 10
+tuned_average_root_mean_squared_error /= 10
 
-mse_output.append({"Default_MSE": default_average_mean_squared_error,
-                   "Tuned_MSE": tuned_average_mean_squared_error})
+rmse_output.append({"Default_RMSE": default_average_root_mean_squared_error,
+                   "Tuned_RMSE": tuned_average_root_mean_squared_error})
 
-# Saving MSE results to a CSV file
-mse_df = pd.DataFrame(mse_output)
-mse_df.to_csv('datasets/Gradient_Boosting_MSE_Results.csv', index=False)
+# Saving RMSE results to a CSV file
+rmse_df = pd.DataFrame(rmse_output)
+rmse_df.to_csv('datasets/Gradient_Boosting_RMSE_Results.csv', index=False)
 
-print("Gradient Boosting Regressor Training Complete. MSE results saved to 'datasets/Gradient_Boosting_MSE_Results.csv'.")
+print("Gradient Boosting Regressor Training Complete. RMSE results saved to 'datasets/Gradient_Boosting_RMSE_Results.csv'.")
