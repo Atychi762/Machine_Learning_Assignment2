@@ -40,10 +40,25 @@ for train, test in kf.split(dataset):
 
     # Training the tuned GBR model
     # Varied hyperparameters are learning rate and n_estimators
-    tuned_model = GradientBoostingRegressor(learning_rate=0.05, n_estimators=500)
-    tuned_model.fit(X_train, y_train)
+    param_grid = {
+        "learning_rate": [0.05, 0.1, 0.15, 0.2, 0.25],
+        "n_estimators": [100, 200, 300, 400, 500]
+    }
+    # Using GridSearchCV to find the best hyperparameters
+    grid_search = GridSearchCV(
+        GradientBoostingRegressor(),
+        param_grid,
+        scoring='neg_mean_squared_error',
+        cv=5,
+        n_jobs=-1,
+        verbose=0,
+        refit=True
+    )
+    grid_search.fit(X_train, y_train)
 
-    tuned_predictions = tuned_model.predict(X_test)
+    best_model = grid_search.best_estimator_
+    # Using the best hyperparameters found
+    tuned_predictions = best_model.predict(X_test)
     tuned_mse = mean_squared_error(y_test, tuned_predictions)
 
     # Appending MSE for the current fold
@@ -63,3 +78,5 @@ mse_output.append({"Default_MSE": default_average_mean_squared_error,
 # Saving MSE results to a CSV file
 mse_df = pd.DataFrame(mse_output)
 mse_df.to_csv('datasets/Gradient_Boosting_MSE_Results.csv', index=False)
+
+print("Gradient Boosting Regressor Training Complete. MSE results saved to 'datasets/Gradient_Boosting_MSE_Results.csv'.")
