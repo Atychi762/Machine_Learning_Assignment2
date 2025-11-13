@@ -37,7 +37,7 @@ def main ():
 
     # per-fold percent errors for all four RMSE columns
     for col in (default_test_col, default_train_col, tuned_test_col, tuned_train_col):
-        pct_col = f"{col}_%averageError"
+        pct_col = f"{col}_Percent_Error"
         rmse_dataset[pct_col] = round(100 * rmse_dataset[col] / mean_tensile_strength, 2)
 
     pd.DataFrame(rmse_dataset).to_csv('datasets/Gradient_Boosting_RMSE_PercentErrors.csv', index=False)

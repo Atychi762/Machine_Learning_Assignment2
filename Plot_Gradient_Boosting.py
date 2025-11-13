@@ -18,3 +18,35 @@ plt.ylabel('Root Mean Squared Error (RMSE)')
 plt.legend()
 plt.grid()
 plt.show()
+
+
+y_scale = [0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5]
+# Plotting Percent Error for Default and Tuned models
+fig, axes = plt.subplots(2, 1, figsize=(14, 8))
+fig.suptitle('Gradient Boosting Regressor Percent Error Comparison')
+fig.subplots_adjust(hspace=0.4)  # add vertical space between subplots
+
+# Top subplot - Default model
+ax = axes[0]
+ax.set_title('Percent Error for Default Model')
+ax.bar(rmse_data_no_avg.index - 0.1, rmse_data_no_avg['Default_TrainData_RMSE_Percent_Error'], width=0.2, label='Default Model Train Data Percent Error', color='blue')
+ax.bar(rmse_data_no_avg.index + 0.1, rmse_data_no_avg['Default_TestData_RMSE_Percent_Error'], width=0.2, label='Default Model Test Data Percent Error', color='orange')
+ax.set_xlabel('Fold Index')
+ax.set_ylabel('Percent Error (%)')
+ax.set_yticks(y_scale)
+ax.grid()
+ax.legend()
+
+# Bottom subplot - Tuned model
+ax = axes[1]
+ax.set_title('Percent Error for Tuned Model')
+ax.bar(rmse_data_no_avg.index - 0.1, rmse_data_no_avg['Tuned_TrainData_RMSE_Percent_Error'], width=0.2, label='Tuned Model Train Data Percent Error', color='green')
+ax.bar(rmse_data_no_avg.index + 0.1, rmse_data_no_avg['Tuned_TestData_RMSE_Percent_Error'], width=0.2, label='Tuned Model Test Data Percent Error', color='red')
+ax.set_xlabel('Fold Index')
+ax.set_ylabel('Percent Error (%)')
+ax.set_yticks(y_scale)
+ax.grid()
+ax.legend()
+
+plt.tight_layout(rect=[0, 0, 1, 0.95])
+plt.show()
