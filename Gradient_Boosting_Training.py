@@ -6,6 +6,9 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import GridSearchCV
+from sklearn.feature_selection import SelectKBest, f_regression
+
+import Compute_Stats
 
 dataset = pd.read_csv('datasets/steel.csv')
 
@@ -33,6 +36,11 @@ for train, test in kf.split(dataset):
     X_test = test_data.drop('tensile_strength', axis=1)
     y_test = test_data['tensile_strength']
 
+    # Feature selection on training data
+    select_k_best = SelectKBest(score_func=f_regression, k=6)
+    X_train = select_k_best.fit_transform(X_train, y_train)
+    X_test = select_k_best.transform(X_test)
+
     # Training the default GBR model
     default_model = GradientBoostingRegressor()
     default_model.fit(X_train, y_train)
@@ -48,8 +56,8 @@ for train, test in kf.split(dataset):
     # Training the tuned GBR model
     # Varied hyperparameters are learning rate and n_estimators
     param_grid = {
-        "learning_rate": [0.05, 0.1, 0.15, 0.2, 0.25],
-        "n_estimators": [100, 200, 300, 400, 500]
+        "learning_rate": [0.1, 0.2, 0.3, 0.4, 0.5],
+        "n_estimators": [100, 200, 300, 400, 500, 600]
     }
     # Using GridSearchCV to find the best hyperparameters
     grid_search = GridSearchCV(
@@ -64,6 +72,7 @@ for train, test in kf.split(dataset):
     grid_search.fit(X_train, y_train)
 
     best_model = grid_search.best_estimator_
+    print(f"Best hyperparameters for current fold: {grid_search.best_params_}")
     # Using the best hyperparameters found
     # Calculating RMSE on training data
     tuned_train_predictions = best_model.predict(X_train)
@@ -76,8 +85,8 @@ for train, test in kf.split(dataset):
     # Appending RMSE for the current fold
     rmse_output.append({"Default_TrainData_RMSE": round(default_train_rmse, 2),
                         "Default_TestData_RMSE": round(default_test_rmse, 2),
-                       "Tuned_TrainData_RMSE": round(tuned_train_rmse, 2),
-                       "Tuned_TestData_RMSE": round(tuned_test_rmse, 2)})
+                        "Tuned_TrainData_RMSE": round(tuned_train_rmse, 2),
+                        "Tuned_TestData_RMSE": round(tuned_test_rmse, 2)})
 
     default_average_rmse_test += default_test_rmse
     tuned_average_rmse_test += tuned_test_rmse
@@ -90,13 +99,18 @@ tuned_average_rmse_test /= 10
 default_average_rmse_train /= 10
 tuned_average_rmse_train /= 10
 
-rmse_output.append({ "Default_TrainData_RMSE": round(default_average_rmse_train, 2),
-                   "Default_TestData_RMSE": round(default_average_rmse_test, 2),
-                   "Tuned_TrainData_RMSE": round(tuned_average_rmse_train, 2),
-                   "Tuned_TestData_RMSE": round(tuned_average_rmse_test, 2)})
+rmse_output.append({"Default_TrainData_RMSE": round(default_average_rmse_train, 2),
+                    "Default_TestData_RMSE": round(default_average_rmse_test, 2),
+                    "Tuned_TrainData_RMSE": round(tuned_average_rmse_train, 2),
+                    "Tuned_TestData_RMSE": round(tuned_average_rmse_test, 2)})
 
 # Saving RMSE results to a CSV file
 rmse_df = pd.DataFrame(rmse_output)
 rmse_df.to_csv('datasets/Gradient_Boosting_RMSE_Results.csv', index=False)
 
 print("Gradient Boosting Regressor Training Complete. RMSE results saved to 'datasets/Gradient_Boosting_RMSE_Results.csv'.")
+
+# Compute interpretable stats from the collected RMSE results
+Compute_Stats.main()
+
+print("Computed interpretable statistics and saved to 'datasets/Gradient_Boosting_RMSE_PercentErrors.csv'.")
