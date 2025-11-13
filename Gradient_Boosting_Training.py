@@ -43,6 +43,8 @@ for train, test in kf.split(dataset):
     # Calculating RMSE on training data
     default_train_predictions = default_model.predict(X_train)
     default_train_rmse = root_mean_squared_error(y_train, default_train_predictions)
+
+    # TODO: Add averaging of difference in predicted vs actual tensile_strength values
     
     # Calculating RMSE on test data
     default_test_predictions = default_model.predict(X_test)
@@ -77,6 +79,8 @@ for train, test in kf.split(dataset):
     # Calculating RMSE on training data
     tuned_train_predictions = best_model.predict(X_train_tuned)
     tuned_train_rmse = root_mean_squared_error(y_train, tuned_train_predictions)
+
+    # TODO: Add averaging of difference in predicted vs actual tensile_strength values
 
     # Calculating RMSE on test data
     tuned_test_predictions = best_model.predict(X_test_tuned)

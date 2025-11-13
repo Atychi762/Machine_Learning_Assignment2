@@ -3,22 +3,21 @@ import pandas as pd
 import numpy as np
 
 def main ():
-    steel_dataset = pd.read_csv('datasets/steel.csv')
-    rmse_dataset = pd.read_csv('datasets/Gradient_Boosting_RMSE_Results.csv')
+    steel_dataset = pd.read_csv("datasets/steel.csv")
+    rmse_dataset = pd.read_csv("datasets/Gradient_Boosting_RMSE_Results.csv")
 
     # Compute basic stats for tensile_strength
-    tensile_strength_values = steel_dataset['tensile_strength']
+    tensile_strength_values = steel_dataset["tensile_strength"]
     mean_tensile_strength = tensile_strength_values.mean()
     median_tensile_strength = tensile_strength_values.median()
     std_tensile_strength = tensile_strength_values.std()
     range_tensile_strength = tensile_strength_values.max() - tensile_strength_values.min()
 
     # RMSE column names
-    default_test_col = 'Default_TestData_RMSE'
-    tuned_test_col = 'Tuned_TestData_RMSE'
-    default_train_col = 'Default_TrainData_RMSE'
-    tuned_train_col = 'Tuned_TrainData_RMSE'
-
+    default_test_col = "Default_TestData_RMSE"
+    tuned_test_col = "Tuned_TestData_RMSE"
+    default_train_col = "Default_TrainData_RMSE"
+    tuned_train_col = "Tuned_TrainData_RMSE"
 
     # compute averages (for per-fold results we take the mean)
     avg_default_test_rmse = rmse_dataset[default_test_col].mean()
@@ -40,4 +39,4 @@ def main ():
         pct_col = f"{col}_Percent_Error"
         rmse_dataset[pct_col] = round(100 * rmse_dataset[col] / mean_tensile_strength, 2)
 
-    pd.DataFrame(rmse_dataset).to_csv('datasets/Gradient_Boosting_RMSE_PercentErrors.csv', index=False)
+    pd.DataFrame(rmse_dataset).to_csv("datasets/Gradient_Boosting_RMSE_PercentErrors.csv", index=False)
