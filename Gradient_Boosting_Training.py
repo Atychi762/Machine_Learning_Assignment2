@@ -83,7 +83,9 @@ for train, test in kf.split(dataset):
     tuned_test_rmse = root_mean_squared_error(y_test, tuned_test_predictions)
 
     # Appending RMSE for the current fold
-    rmse_output.append({"Default_TrainData_RMSE": round(default_train_rmse, 2),
+    rmse_output.append({"Learning_Rate": grid_search.best_params_['learning_rate'],
+                        "N_Estimators": grid_search.best_params_['n_estimators'],
+                        "Default_TrainData_RMSE": round(default_train_rmse, 2),
                         "Default_TestData_RMSE": round(default_test_rmse, 2),
                         "Tuned_TrainData_RMSE": round(tuned_train_rmse, 2),
                         "Tuned_TestData_RMSE": round(tuned_test_rmse, 2)})
@@ -99,7 +101,9 @@ tuned_average_rmse_test /= 10
 default_average_rmse_train /= 10
 tuned_average_rmse_train /= 10
 
-rmse_output.append({"Default_TrainData_RMSE": round(default_average_rmse_train, 2),
+rmse_output.append({"Learning_Rate": None,
+                    "N_Estimators": None,
+                    "Default_TrainData_RMSE": round(default_average_rmse_train, 2),
                     "Default_TestData_RMSE": round(default_average_rmse_test, 2),
                     "Tuned_TrainData_RMSE": round(tuned_average_rmse_train, 2),
                     "Tuned_TestData_RMSE": round(tuned_average_rmse_test, 2)})
