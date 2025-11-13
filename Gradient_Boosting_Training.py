@@ -61,7 +61,7 @@ for train, test in kf.split(dataset):
     }
     # Using GridSearchCV to find the best hyperparameters
     grid_search = GridSearchCV(
-        GradientBoostingRegressor(n_estimators=1000, subsample=0.7, random_state=42),
+        GradientBoostingRegressor(n_estimators=750, subsample=0.65, random_state=42),
         param_grid,
         scoring='neg_mean_squared_error',
         cv=5,
