@@ -17,7 +17,7 @@ scaler = StandardScaler()
 feature_cols = dataset.columns.drop('tensile_strength')
 dataset[feature_cols] = scaler.fit_transform(dataset[feature_cols])
 
-kf = KFold(n_splits=10, shuffle=False)
+kf = KFold(n_splits=10, shuffle=True, random_state=42)
 default_average_rmse_test = 0
 tuned_average_rmse_test = 0
 default_average_rmse_train = 0
@@ -36,11 +36,6 @@ for train, test in kf.split(dataset):
     X_test = test_data.drop('tensile_strength', axis=1)
     y_test = test_data['tensile_strength']
 
-    # Feature selection on training data
-    select_k_best = SelectKBest(score_func=f_regression, k=6)
-    X_train = select_k_best.fit_transform(X_train, y_train)
-    X_test = select_k_best.transform(X_test)
-
     # Training the default GBR model
     default_model = GradientBoostingRegressor()
     default_model.fit(X_train, y_train)
@@ -53,15 +48,20 @@ for train, test in kf.split(dataset):
     default_test_predictions = default_model.predict(X_test)
     default_test_rmse = root_mean_squared_error(y_test, default_test_predictions)
 
+    # Feature selection on training data
+    select_k_best = SelectKBest(score_func=f_regression, k=6)
+    X_train_tuned = select_k_best.fit_transform(X_train, y_train)
+    X_test_tuned = select_k_best.transform(X_test)
+
     # Training the tuned GBR model
-    # Varied hyperparameters are learning rate and n_estimators
+    # Varied hyperparameters are learning rate and max_depth
     param_grid = {
-        "learning_rate": [0.1, 0.2, 0.3, 0.4, 0.5],
-        "n_estimators": [100, 200, 300, 400, 500, 600]
+        "learning_rate": [0.0025, 0.05, 0.075, 0.1, 0.125, 0.15],
+        "max_depth": [1, 2, 3, 4, 5]
     }
     # Using GridSearchCV to find the best hyperparameters
     grid_search = GridSearchCV(
-        GradientBoostingRegressor(),
+        GradientBoostingRegressor(n_estimators=1000, subsample=0.7, random_state=42),
         param_grid,
         scoring='neg_mean_squared_error',
         cv=5,
@@ -69,17 +69,17 @@ for train, test in kf.split(dataset):
         verbose=0,
         refit=True
     )
-    grid_search.fit(X_train, y_train)
+    grid_search.fit(X_train_tuned, y_train)
 
     best_model = grid_search.best_estimator_
-    print(f"Best hyperparameters for current fold: {grid_search.best_params_}")
+    print(f"Best hyperparameters for current fold: {grid_search.best_params_}, n_estimators: {best_model.n_estimators}")
     # Using the best hyperparameters found
     # Calculating RMSE on training data
-    tuned_train_predictions = best_model.predict(X_train)
+    tuned_train_predictions = best_model.predict(X_train_tuned)
     tuned_train_rmse = root_mean_squared_error(y_train, tuned_train_predictions)
 
     # Calculating RMSE on test data
-    tuned_test_predictions = best_model.predict(X_test)
+    tuned_test_predictions = best_model.predict(X_test_tuned)
     tuned_test_rmse = root_mean_squared_error(y_test, tuned_test_predictions)
 
     # Appending RMSE for the current fold
