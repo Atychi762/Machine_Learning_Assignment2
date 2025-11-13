@@ -57,11 +57,11 @@ for train, test in kf.split(dataset):
     # Varied hyperparameters are learning rate and max_depth
     param_grid = {
         "learning_rate": [0.0025, 0.05, 0.075, 0.1, 0.125, 0.15],
-        "max_depth": [1, 2, 3, 4, 5]
+        "n_estimators": [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
     }
     # Using GridSearchCV to find the best hyperparameters
     grid_search = GridSearchCV(
-        GradientBoostingRegressor(n_estimators=750, subsample=0.65, random_state=42),
+        GradientBoostingRegressor(),
         param_grid,
         scoring='neg_mean_squared_error',
         cv=5,
@@ -72,7 +72,7 @@ for train, test in kf.split(dataset):
     grid_search.fit(X_train_tuned, y_train)
 
     best_model = grid_search.best_estimator_
-    print(f"Best hyperparameters for current fold: {grid_search.best_params_}, n_estimators: {best_model.n_estimators}")
+    print(f"Best hyperparameters for current fold: {grid_search.best_params_}")
     # Using the best hyperparameters found
     # Calculating RMSE on training data
     tuned_train_predictions = best_model.predict(X_train_tuned)
