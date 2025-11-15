@@ -18,7 +18,6 @@ plt.ylabel("Root Mean Squared Error (RMSE)")
 plt.legend()
 plt.grid()
 plt.savefig("images/Gradient_Boosting_RMSE_Comparison.png")
-plt.show()
 
 
 y_scale = [0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5]
@@ -51,7 +50,6 @@ ax.legend()
 
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 plt.savefig("images/Gradient_Boosting_Percent_Error_Comparison.png")
-plt.show()
 
 # TODO: Add plots for average difference in predicted vs actual tensile_strength values
 # TODO: Add hyperparameter impact analysis plots
