@@ -23,7 +23,7 @@ plt.show()
 
 y_scale = [0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5]
 # Plotting Percent Error for Default and Tuned models
-fig, axes = plt.subplots(2, 1, figsize=(14, 8))
+fig, axes = plt.subplots(2, 1, figsize=(10, 6))
 fig.suptitle("Gradient Boosting Regressor Percent Error Comparison")
 fig.subplots_adjust(hspace=0.4)  # add vertical space between subplots
 
