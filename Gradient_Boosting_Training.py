@@ -133,13 +133,13 @@ for idx, (row_indices, diffs) in enumerate(default_strength_pred_and_res):
     col = col_names[idx]
     diffs_df.loc[row_indices, col] = diffs
 
-diffs_df.to_csv("datasets/Default_GBR_Train_Strength_Differences.csv", index=False)
+diffs_df.to_csv("datasets/Default_GBR_Strength_Differences.csv", index=False)
 
 for idx, (row_indices, diffs) in enumerate(tuned_strength_pred_and_res):
     col = col_names[idx]
     diffs_df.loc[row_indices, col] = diffs
 
-diffs_df.to_csv("datasets/Tuned_GBR_Train_Strength_Differences.csv", index=False)
+diffs_df.to_csv("datasets/Tuned_GBR_Strength_Differences.csv", index=False)
 
 print("Gradient Boosting Regressor Training Complete. RMSE results saved to 'datasets/Gradient_Boosting_RMSE_Results.csv'.")
 

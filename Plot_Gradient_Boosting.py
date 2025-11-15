@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 rmse_data = pd.read_csv("datasets/Gradient_Boosting_RMSE_PercentErrors.csv")
 rmse_data_no_avg = rmse_data[:-1] # Exclude the last row which contains averages
+default_GBR_train_diff = pd.read_csv("datasets/Default_GBR_Strength_Differences.csv")
+tuned_GBR_train_diff = pd.read_csv("datasets/Tuned_GBR_Strength_Differences.csv")
 
 # Plotting RMSE for Default and Tuned models
 plt.figure(figsize=(10, 6))
