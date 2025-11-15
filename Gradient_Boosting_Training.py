@@ -18,10 +18,14 @@ feature_cols = dataset.columns.drop('tensile_strength')
 dataset[feature_cols] = scaler.fit_transform(dataset[feature_cols])
 
 kf = KFold(n_splits=10, shuffle=True, random_state=42)
+
 default_average_rmse_test = 0
 tuned_average_rmse_test = 0
 default_average_rmse_train = 0
 tuned_average_rmse_train = 0
+
+default_strength_pred_and_res = []
+tuned_strength_pred_and_res = []
 
 rmse_output = []
 
@@ -43,12 +47,12 @@ for train, test in kf.split(dataset):
     # Calculating RMSE on training data
     default_train_predictions = default_model.predict(X_train)
     default_train_rmse = root_mean_squared_error(y_train, default_train_predictions)
-
-    # TODO: Add averaging of difference in predicted vs actual tensile_strength values
+    default_strength_pred_and_res.append((train, default_train_predictions - y_train.values))
     
     # Calculating RMSE on test data
     default_test_predictions = default_model.predict(X_test)
     default_test_rmse = root_mean_squared_error(y_test, default_test_predictions)
+    default_strength_pred_and_res.append((test, default_test_predictions - y_test.values))
 
     # Feature selection on training data
     select_k_best = SelectKBest(score_func=f_regression, k=6)
@@ -79,12 +83,13 @@ for train, test in kf.split(dataset):
     # Calculating RMSE on training data
     tuned_train_predictions = best_model.predict(X_train_tuned)
     tuned_train_rmse = root_mean_squared_error(y_train, tuned_train_predictions)
-
-    # TODO: Add averaging of difference in predicted vs actual tensile_strength values
+    tuned_strength_pred_and_res.append((train, tuned_train_predictions - y_train.values))
 
     # Calculating RMSE on test data
     tuned_test_predictions = best_model.predict(X_test_tuned)
     tuned_test_rmse = root_mean_squared_error(y_test, tuned_test_predictions)
+    tuned_strength_pred_and_res.append((test, tuned_test_predictions - y_test.values))
+
 
     # Appending RMSE for the current fold
     rmse_output.append({"Learning_Rate": grid_search.best_params_['learning_rate'],
@@ -114,7 +119,27 @@ rmse_output.append({"Learning_Rate": None,
 
 # Saving RMSE results to a CSV file
 rmse_df = pd.DataFrame(rmse_output)
-rmse_df.to_csv('datasets/Gradient_Boosting_RMSE_Results.csv', index=False)
+rmse_df.to_csv("datasets/Gradient_Boosting_RMSE_Results.csv", index=False)
+
+n_samples = len(dataset)
+col_names = []
+for i in range(1, 11):
+    col_names.append(f"fold_{i}_train")
+    col_names.append(f"fold_{i}_test")
+
+diffs_df = pd.DataFrame(index=range(n_samples), columns=col_names, dtype=float)
+
+for idx, (row_indices, diffs) in enumerate(default_strength_pred_and_res):
+    col = col_names[idx]
+    diffs_df.loc[row_indices, col] = diffs
+
+diffs_df.to_csv("datasets/Default_GBR_Train_Strength_Differences.csv", index=False)
+
+for idx, (row_indices, diffs) in enumerate(tuned_strength_pred_and_res):
+    col = col_names[idx]
+    diffs_df.loc[row_indices, col] = diffs
+
+diffs_df.to_csv("datasets/Tuned_GBR_Train_Strength_Differences.csv", index=False)
 
 print("Gradient Boosting Regressor Training Complete. RMSE results saved to 'datasets/Gradient_Boosting_RMSE_Results.csv'.")
 
