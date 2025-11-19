@@ -79,7 +79,6 @@ for train, test in kf.split(dataset):
         verbose=3,
         refit=True
     )
-    print("Tuning hyperparameters for current fold...")
     grid_search.fit(X_train_tuned, y_train)
 
     best_model = grid_search.best_estimator_
