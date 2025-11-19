@@ -1,14 +1,18 @@
 import pandas as pd
 import numpy as np
 
+from warnings import filterwarnings
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.exceptions import ConvergenceWarning
 
 import Compute_Stats
+
+filterwarnings("ignore", category=ConvergenceWarning)
 
 dataset = pd.read_csv('datasets/steel.csv')
 
@@ -60,10 +64,10 @@ for train, test in kf.split(dataset):
     X_test_tuned = select_k_best.transform(X_test)
 
     # Training the tuned GBR model
-    # Varied hyperparameters are learning rate and max_depth
+    # Varied hyperparameters are learning rate init and max_iter
     param_grid = {
-        "learning_rate_init": [0.0025, 0.05, 0.075, 0.1, 0.125, 0.15],
-        "max_iter": [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000],
+        "learning_rate_init": [0.00001, 0.0001,0.001, 0.01],
+        "max_iter": [200, 300, 400, 500, 600, 700, 800, 900, 1000],
     }
     # Using GridSearchCV to find the best hyperparameters
     grid_search = GridSearchCV(
@@ -92,8 +96,8 @@ for train, test in kf.split(dataset):
 
 
     # Appending RMSE for the current fold
-    rmse_output.append({"Learning_Rate": grid_search.best_params_['learning_rate'],
-                        "N_Estimators": grid_search.best_params_['n_estimators'],
+    rmse_output.append({"Learning_Rate_init": grid_search.best_params_['learning_rate_init'],
+                        "max_iter": grid_search.best_params_['max_iter'],
                         "Default_TrainData_RMSE": round(default_train_rmse, 2),
                         "Default_TestData_RMSE": round(default_test_rmse, 2),
                         "Tuned_TrainData_RMSE": round(tuned_train_rmse, 2),
@@ -111,8 +115,8 @@ tuned_average_rmse_test /= 10
 default_average_rmse_train /= 10
 tuned_average_rmse_train /= 10
 
-rmse_output.append({"Learning_Rate": None,
-                    "N_Estimators": None,
+rmse_output.append({"Learning_Rate_init": None,
+                    "max_iter": None,
                     "Default_TrainData_RMSE": round(default_average_rmse_train, 2),
                     "Default_TestData_RMSE": round(default_average_rmse_test, 2),
                     "Tuned_TrainData_RMSE": round(tuned_average_rmse_train, 2),
