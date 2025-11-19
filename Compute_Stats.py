@@ -2,9 +2,9 @@
 import pandas as pd
 import numpy as np
 
-def main ():
-    steel_dataset = pd.read_csv("datasets/steel.csv")
-    rmse_dataset = pd.read_csv("datasets/Gradient_Boosting_RMSE_Results.csv")
+def main (steel_path, rmse_path):
+    steel_dataset = pd.read_csv(steel_path)
+    rmse_dataset = pd.read_csv(rmse_path)
 
     # Compute basic stats for tensile_strength
     tensile_strength_values = steel_dataset["tensile_strength"]
@@ -39,4 +39,4 @@ def main ():
         pct_col = f"{col}_Percent_Error"
         rmse_dataset[pct_col] = round(100 * rmse_dataset[col] / mean_tensile_strength, 2)
 
-    pd.DataFrame(rmse_dataset).to_csv("datasets/Gradient_Boosting_RMSE_PercentErrors.csv", index=False)
+    pd.DataFrame(rmse_dataset).to_csv(rmse_path.replace(".csv", "_PercentErrors.csv"), index=False)
