@@ -119,7 +119,7 @@ rmse_output.append({"Learning_Rate": None,
 
 # Saving RMSE results to a CSV file
 rmse_df = pd.DataFrame(rmse_output)
-rmse_df.to_csv("datasets/Gradient_Boosting_RMSE.csv", index=False)
+rmse_df.to_csv("datasets/GBR/Gradient_Boosting_RMSE.csv", index=False)
 
 n_samples = len(dataset)
 col_names = []
@@ -133,17 +133,17 @@ for idx, (row_indices, diffs) in enumerate(default_strength_pred_and_res):
     col = col_names[idx]
     diffs_df.loc[row_indices, col] = diffs
 
-diffs_df.to_csv("datasets/Default_GBR_Strength_Differences.csv", index=False)
+diffs_df.to_csv("datasets/GBR/Default_GBR_Strength_Differences.csv", index=False)
 
 for idx, (row_indices, diffs) in enumerate(tuned_strength_pred_and_res):
     col = col_names[idx]
     diffs_df.loc[row_indices, col] = diffs
 
-diffs_df.to_csv("datasets/Tuned_GBR_Strength_Differences.csv", index=False)
+diffs_df.to_csv("datasets/GBR/Tuned_GBR_Strength_Differences.csv", index=False)
 
-print("Gradient Boosting Regressor Training Complete. RMSE results saved to 'datasets/Gradient_Boosting_RMSE.csv'.")
+print("Gradient Boosting Regressor Training Complete. RMSE results saved to 'datasets/GBR/Gradient_Boosting_RMSE.csv'.")
 
 # Compute interpretable stats from the collected RMSE results
-Compute_Stats.main("datasets/steel.csv", "datasets/Gradient_Boosting_RMSE.csv")
+Compute_Stats.main("datasets/steel.csv", "datasets/GBR/Gradient_Boosting_RMSE.csv")
 
-print("Computed interpretable statistics and saved to 'datasets/Gradient_Boosting_RMSE_PercentErrors.csv'.")
+print("Computed interpretable statistics and saved to 'datasets/GBR/Gradient_Boosting_RMSE_PercentErrors.csv'.")

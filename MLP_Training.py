@@ -66,8 +66,8 @@ for train, test in kf.split(dataset):
     # Training the tuned GBR model
     # Varied hyperparameters are learning rate init and max_iter
     param_grid = {
-        "learning_rate_init": [0.00001, 0.0001,0.001, 0.01],
-        "max_iter": [200, 300, 400, 500, 600, 700, 800, 900, 1000],
+        "learning_rate_init": list(np.round(np.arange(0.0002, 0.0101, 0.0002), 4)),
+        "max_iter": list(range(1600, 3001, 50)),
     }
     # Using GridSearchCV to find the best hyperparameters
     grid_search = GridSearchCV(
@@ -76,9 +76,10 @@ for train, test in kf.split(dataset):
         scoring='neg_mean_squared_error',
         cv=5,
         n_jobs=-1,
-        verbose=0,
+        verbose=3,
         refit=True
     )
+    print("Tuning hyperparameters for current fold...")
     grid_search.fit(X_train_tuned, y_train)
 
     best_model = grid_search.best_estimator_
@@ -124,7 +125,7 @@ rmse_output.append({"Learning_Rate_init": None,
 
 # Saving RMSE results to a CSV file
 rmse_df = pd.DataFrame(rmse_output)
-rmse_df.to_csv("datasets/MLP_RMSE.csv", index=False)
+rmse_df.to_csv("datasets//MLP/MLP_RMSE.csv", index=False)
 
 n_samples = len(dataset)
 col_names = []
@@ -138,17 +139,17 @@ for idx, (row_indices, diffs) in enumerate(default_strength_pred_and_res):
     col = col_names[idx]
     diffs_df.loc[row_indices, col] = diffs
 
-diffs_df.to_csv("datasets/Default_MLP_Strength_Differences.csv", index=False)
+diffs_df.to_csv("datasets/MLP/Default_MLP_Strength_Differences.csv", index=False)
 
 for idx, (row_indices, diffs) in enumerate(tuned_strength_pred_and_res):
     col = col_names[idx]
     diffs_df.loc[row_indices, col] = diffs
 
-diffs_df.to_csv("datasets/Tuned_MLP_Strength_Differences.csv", index=False)
+diffs_df.to_csv("datasets/MLP/Tuned_MLP_Strength_Differences.csv", index=False)
 
-print("MLP Regressor Training Complete. RMSE results saved to 'datasets/MLP_RMSE.csv'.")
+print("MLP Regressor Training Complete. RMSE results saved to 'datasets/MLP/MLP_RMSE.csv'.")
 
 # Compute interpretable stats from the collected RMSE results
-Compute_Stats.main("datasets/steel.csv", "datasets/MLP_RMSE.csv")
+Compute_Stats.main("datasets/steel.csv", "datasets/MLP/MLP_RMSE.csv")
 
-print("Computed interpretable statistics and saved to 'datasets/MLP_RMSE_PercentErrors.csv'.")
+print("Computed interpretable statistics and saved to 'datasets/MLP/MLP_RMSE_PercentErrors.csv'.")
