@@ -78,10 +78,7 @@ for i in range(1, 11):
             "train_mean": tuned_train_mean,
             "test_mean": tuned_test_mean,
         })
-
-print("Default Model Average Differences:", default)
-print("Tuned Model Average Differences:", tuned)
-
+# Plotting average differences
 plt.figure(figsize=(10, 6))
 plt.plot([d["fold"] for d in default], [d["train_mean"] for d in default], marker="o", label="Default Model Training Mean Difference", color="blue")
 plt.plot([d["fold"] for d in default], [d["test_mean"] for d in default], marker="o", label="Default Model Testing Mean Difference", color="orange")
@@ -94,5 +91,27 @@ plt.legend()
 plt.grid()
 plt.savefig("images/MLP_Average_Difference_Comparison.png")
 
-
 # TODO: Add hyperparameter impact analysis plots
+# Hyperparameter impact analysis
+learning_rate =  rmse_data_no_avg["Learning_Rate_init"]
+max_iter = rmse_data_no_avg["max_iter"]
+
+plt.figure(figsize=(10, 6))
+plt.scatter(learning_rate, rmse_data_no_avg["Tuned_TestData_RMSE"], color="purple")
+plt.scatter(learning_rate, rmse_data_no_avg["Tuned_TrainData_RMSE"], color="brown")
+plt.legend(["Tuned Model Testing RMSE", "Tuned Model Training RMSE"])
+plt.title("Impact of Learning Rate on Tuned MLP RMSE")
+plt.xlabel("Learning Rate")
+plt.ylabel("Tuned Model RMSE")
+plt.grid()
+
+plt.savefig("images/MLP_Learning_Rate_Impact.png")
+plt.figure(figsize=(10, 6))
+plt.scatter(max_iter, rmse_data_no_avg["Tuned_TestData_RMSE"], color="purple")
+plt.scatter(max_iter, rmse_data_no_avg["Tuned_TrainData_RMSE"], color="brown")
+plt.legend(["Tuned Model Testing RMSE", "Tuned Model Training RMSE"])
+plt.title("Impact of Max Iterations on Tuned MLP RMSE")
+plt.xlabel("Max Iterations")
+plt.ylabel("Tuned Model RMSE")
+plt.grid()
+plt.savefig("images/MLP_Max_Iterations_Impact.png")
