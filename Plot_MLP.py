@@ -54,8 +54,6 @@ ax.legend()
 plt.tight_layout(rect=[0, 0, 1, 0.95])
 plt.savefig("images/MLP_Percent_Error_Comparison.png")
 
-# TODO: Add plots for average difference in predicted vs actual tensile_strength values
-
 # Calculating average differences
 default = []
 tuned = []
@@ -91,7 +89,6 @@ plt.legend()
 plt.grid()
 plt.savefig("images/MLP_Average_Difference_Comparison.png")
 
-# TODO: Add hyperparameter impact analysis plots
 # Hyperparameter impact analysis
 learning_rate =  rmse_data_no_avg["Learning_Rate_init"]
 max_iter = rmse_data_no_avg["max_iter"]
