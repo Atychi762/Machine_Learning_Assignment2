@@ -6,12 +6,8 @@ def main (steel_path, rmse_path):
     steel_dataset = pd.read_csv(steel_path)
     rmse_dataset = pd.read_csv(rmse_path)
 
-    # Compute basic stats for tensile_strength
-    tensile_strength_values = steel_dataset["tensile_strength"]
-    mean_tensile_strength = tensile_strength_values.mean()
-    median_tensile_strength = tensile_strength_values.median()
-    std_tensile_strength = tensile_strength_values.std()
-    range_tensile_strength = tensile_strength_values.max() - tensile_strength_values.min()
+    # Compute the mean for tensile_strength
+    mean_tensile_strength = steel_dataset["tensile_strength"].mean(skipna=True)
 
     # RMSE column names
     default_test_col = "Default_TestData_RMSE"
@@ -20,13 +16,10 @@ def main (steel_path, rmse_path):
     tuned_train_col = "Tuned_TrainData_RMSE"
 
     # compute averages (for per-fold results we take the mean)
-    avg_default_test_rmse = rmse_dataset[default_test_col].mean()
-    avg_tuned_test_rmse = rmse_dataset[tuned_test_col].mean()
-    avg_default_train_rmse = rmse_dataset[default_train_col].mean()
-    avg_tuned_train_rmse = rmse_dataset[tuned_train_col].mean()
-
-    print(f"mean(tensile_strength) = {mean_tensile_strength:.2f}")
-    print(f"median = {median_tensile_strength:.2f}, std = {std_tensile_strength:.2f}, range = {range_tensile_strength:.2f}\n")
+    avg_default_test_rmse = rmse_dataset[default_test_col].mean(skipna=True)
+    avg_tuned_test_rmse = rmse_dataset[tuned_test_col].mean(skipna=True)
+    avg_default_train_rmse = rmse_dataset[default_train_col].mean(skipna=True)
+    avg_tuned_train_rmse = rmse_dataset[tuned_train_col].mean(skipna=True)
 
     # average RMSEs and their average percent errors
     print(f"Avg {default_test_col}  = {avg_default_test_rmse:.2f} -> {100*avg_default_test_rmse/mean_tensile_strength:.2f}% average error")

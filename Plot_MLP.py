@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# TODO: refactor to avoid code duplication with GBR plotting script
-
 rmse_data = pd.read_csv("datasets/MLP/MLP_RMSE_PercentErrors.csv")
 rmse_data_no_avg = rmse_data[:-1] # Exclude the last row which contains averages
 default_MLP_train_diff = pd.read_csv("datasets/MLP/Default_MLP_Strength_Differences.csv")
