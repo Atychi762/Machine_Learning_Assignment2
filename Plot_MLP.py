@@ -55,4 +55,44 @@ plt.tight_layout(rect=[0, 0, 1, 0.95])
 plt.savefig("images/MLP_Percent_Error_Comparison.png")
 
 # TODO: Add plots for average difference in predicted vs actual tensile_strength values
+
+# Calculating average differences
+default = []
+tuned = []
+
+for i in range(1, 11):
+    train_col = f"fold_{i}_train"
+    test_col = f"fold_{i}_test"
+    default_train_mean = default_MLP_train_diff[train_col].mean(skipna=True)
+    default_test_mean = default_MLP_train_diff[test_col].mean(skipna=True)
+    tuned_train_mean = tuned_MLP_train_diff[train_col].mean(skipna=True)
+    tuned_test_mean = tuned_MLP_train_diff[test_col].mean(skipna=True)
+
+    default.append({
+            "fold": i,
+            "train_mean": default_train_mean,
+            "test_mean": default_test_mean,
+        })
+    tuned.append({
+            "fold": i,
+            "train_mean": tuned_train_mean,
+            "test_mean": tuned_test_mean,
+        })
+
+print("Default Model Average Differences:", default)
+print("Tuned Model Average Differences:", tuned)
+
+plt.figure(figsize=(10, 6))
+plt.plot([d["fold"] for d in default], [d["train_mean"] for d in default], marker="o", label="Default Model Training Mean Difference", color="blue")
+plt.plot([d["fold"] for d in default], [d["test_mean"] for d in default], marker="o", label="Default Model Testing Mean Difference", color="orange")
+plt.plot([d["fold"] for d in tuned], [d["train_mean"] for d in tuned], marker="o", label="Tuned Model Training Mean Difference", color="green")
+plt.plot([d["fold"] for d in tuned], [d["test_mean"] for d in tuned], marker="o", label="Tuned Model Testing Mean Difference", color="red")
+plt.title("MLP Regressor Average Difference in Predicted vs Actual Tensile Strength")
+plt.xlabel("Fold Index")
+plt.ylabel("Average Difference in Tensile Strength")
+plt.legend()
+plt.grid()
+plt.savefig("images/MLP_Average_Difference_Comparison.png")
+
+
 # TODO: Add hyperparameter impact analysis plots
