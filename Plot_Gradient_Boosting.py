@@ -84,9 +84,6 @@ for i in range(1, 11):
             "train_mean": tuned_train_mean,
             "test_mean": tuned_test_mean,
         })
-    
-print("Default Model Average Differences:", default)
-print("Tuned Model Average Differences:", tuned)
 
 # Plotting average differences
 plt.figure(figsize=(10, 6))
@@ -102,25 +99,28 @@ plt.grid()
 plt.savefig("images/Gradient_Boosting_Average_Difference_Comparison.png")
 
 # Hyperparameter impact analysis
-learning_rate =  rmse_data_no_avg["Learning_Rate"]
+learning_rate = rmse_data_no_avg["Learning_Rate"]
 n_estimators = rmse_data_no_avg["N_Estimators"]
 
-plt.figure(figsize=(10, 6))
-plt.scatter(learning_rate, rmse_data_no_avg["Tuned_TestData_RMSE"], color="purple")
-plt.scatter(learning_rate, rmse_data_no_avg["Tuned_TrainData_RMSE"], color="brown")
-plt.legend(["Tuned Model Testing RMSE", "Tuned Model Training RMSE"])
-plt.title("Impact of Learning Rate on Tuned Gradient Boosting RMSE")
-plt.xlabel("Learning Rate")
-plt.ylabel("Tuned Model RMSE")
-plt.grid()
+fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+# Left: learning rate impact
+ax = axes[0]
+ax.scatter(learning_rate, rmse_data_no_avg["Tuned_TestData_RMSE"], color="purple", label="Tuned test data RMSE")
+ax.scatter(learning_rate, rmse_data_no_avg["Tuned_TrainData_RMSE"], color="brown", label="Tuned train data RMSE")
+ax.set_title("Impact of Learning Rate on Tuned Gradient Boosting RMSE")
+ax.set_xlabel("Learning Rate")
+ax.set_ylabel("Tuned Model RMSE")
+ax.grid(True)
+ax.legend()
 
-plt.savefig("images/Gradient_Boosting_Learning_Rate_Impact.png")
-plt.figure(figsize=(10, 6))
-plt.scatter(n_estimators, rmse_data_no_avg["Tuned_TestData_RMSE"], color="purple")
-plt.scatter(n_estimators, rmse_data_no_avg["Tuned_TrainData_RMSE"], color="brown")
-plt.legend(["Tuned Model Testing RMSE", "Tuned Model Training RMSE"])
-plt.title("Impact of N Estimators on Tuned Gradient Boosting RMSE")
-plt.xlabel("N Estimators")
-plt.ylabel("Tuned Model RMSE")
-plt.grid()
-plt.savefig("images/Gradient_Boosting_N_Estimators_Impact.png")
+# Right: n_estimators impact
+ax = axes[1]
+ax.scatter(n_estimators, rmse_data_no_avg["Tuned_TestData_RMSE"], color="purple", label="Tuned test data RMSE")
+ax.scatter(n_estimators, rmse_data_no_avg["Tuned_TrainData_RMSE"], color="brown", label="Tuned train data RMSE")
+ax.set_title("Impact of N Estimators on Tuned Gradient Boosting RMSE")
+ax.set_xlabel("N Estimators")
+ax.grid(True)
+
+
+plt.tight_layout()
+fig.savefig("images/Gradient_Boosting_Hyperparameter_Impact.png")
